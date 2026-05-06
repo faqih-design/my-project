@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Name Layout Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="sidebar" aria-label="Panel kontrol">
+      <section class="brand-card">
+        <p class="eyebrow">PC Desktop Application</p>
+        <h1>Name Layout Generator</h1>
+        <p>Layout nama otomatis untuk sablon, printing, bordir, dan custom nama.</p>
+      </section>
+
+      <section class="panel warning" id="limitWarning" hidden></section>
+
+      <section class="panel grid two">
+        <label>Kode
+          <input id="kodeInput" value="KRUPUK" autocomplete="off">
+        </label>
+        <label>Tanggal
+          <input id="tanggalInput" value="01" autocomplete="off">
+        </label>
+        <label>Ruko
+          <input id="rukoInput" value="RESI RUKO 2" autocomplete="off">
+        </label>
+        <label>Pengiriman
+          <input id="pengirimanInput" value="RBS" autocomplete="off">
+        </label>
+      </section>
+
+      <section class="panel">
+        <label>Mode Header
+          <select id="headerModeInput">
+            <option>LANJUTKAN KODE</option>
+            <option>KODE BARU</option>
+          </select>
+        </label>
+        <div class="button-row">
+          <button id="newGroupButton" type="button">Tambah Grup</button>
+          <button id="finishGroupButton" type="button">F1 Selesaikan Grup</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <label>Resi ID
+          <input id="resiInput" value="RESI-001" autocomplete="off">
+        </label>
+        <label>Input Nama (Enter / multi-line paste)
+          <textarea id="nameInput" rows="5" placeholder="Ketik nama lalu ENTER"></textarea>
+        </label>
+        <button id="addNamesButton" type="button" class="primary">Masukkan ke Layout</button>
+      </section>
+
+      <section class="panel grid two compact">
+        <label>Text C<input id="textC" type="number" value="0" min="0" max="100"></label>
+        <label>Text M<input id="textM" type="number" value="0" min="0" max="100"></label>
+        <label>Text Y<input id="textY" type="number" value="0" min="0" max="100"></label>
+        <label>Text K<input id="textK" type="number" value="100" min="0" max="100"></label>
+        <label>Outline K<input id="outlineK" type="number" value="0" min="0" max="100"></label>
+        <label>Opacity<input id="outlineOpacity" type="number" value="1" min="0" max="1" step="0.05"></label>
+      </section>
+
+      <section class="panel grid two compact">
+        <label>Outline Mode
+          <select id="outlineMode">
+            <option value="auto">AUTO OUTLINE</option>
+            <option value="manual">MANUAL OUTLINE</option>
+          </select>
+        </label>
+        <label>DPI Export
+          <select id="dpiInput">
+            <option value="72">72 DPI</option>
+            <option value="150">150 DPI</option>
+            <option value="300" selected>300 DPI</option>
+          </select>
+        </label>
+        <label>Min Outline (cm)<input id="outlineMin" type="number" value="0.04" min="0" step="0.01"></label>
+        <label>Max Outline (cm)<input id="outlineMax" type="number" value="0.15" min="0" step="0.01"></label>
+      </section>
+
+      <section class="panel grid two compact">
+        <label>Font Nama<input id="fontInput" value="Arial Black, Impact, sans-serif"></label>
+        <label>Font Header<input id="headerFontInput" value="Arial, sans-serif"></label>
+        <label>Ukuran Header (cm)<input id="headerSizeInput" type="number" value="1.15" min="0.4" step="0.05"></label>
+        <label>Letter Spacing (cm)<input id="letterSpacingInput" type="number" value="0.03" step="0.01"></label>
+      </section>
+
+      <section class="panel">
+        <div class="counter"><span>GROUP</span><strong id="groupCounter">0 / 5</strong></div>
+        <div class="stats" id="statsOutput"></div>
+        <p class="private-hint" id="privateHint">Private mode terkunci. Gunakan shortcut rahasia owner untuk membuka.</p>
+        <label class="inline-check"><input id="privateModeInput" type="checkbox" disabled> Private unlock mode</label>
+        <label>Custom limit private<input id="privateLimitInput" type="number" placeholder="Kosong = unlimited" min="1" disabled></label>
+      </section>
+
+      <section class="panel">
+        <label>Quick Search
+          <input id="searchInput" placeholder="nama, resi, kode, ruko">
+        </label>
+        <div id="searchResults" class="search-results"></div>
+      </section>
+
+      <section class="panel shortcuts">
+        <strong>Shortcut</strong>
+        <span>Ctrl+S Save</span><span>Ctrl+E Export</span><span>Ctrl+F Search</span><span>Ctrl+A Select All</span><span>Ctrl+Z/Y Undo/Redo</span>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <header class="toolbar">
+        <div>
+          <p class="eyebrow">Realtime Preview</p>
+          <h2>Canvas 58 cm × dinamis</h2>
+        </div>
+        <div class="button-row">
+          <button id="saveButton" type="button">Save Project</button>
+          <button id="exportButton" type="button" class="primary">Export PNG Transparan</button>
+        </div>
+      </header>
+      <div class="canvas-wrap">
+        <svg id="previewCanvas" role="img" aria-label="Preview layout nama"></svg>
+      </div>
+    </section>
+  </main>
+
+  <script src="layoutEngine.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
