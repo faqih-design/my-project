@@ -35,6 +35,12 @@ npm start
 npm test
 ```
 
+Validasi lengkap tanpa conflict marker:
+
+```bash
+npm run check
+```
+
 Test unit mencakup aturan uppercase, auto-resize, konversi warna HEX/RGB/CMYK, metrik bounding box, header template, batas grup, private mode, flow 4 kolom, pemindahan resi utuh ke grup baru, validasi spacing anti-overlap, data object header/nama, sequential balance, dan estimasi area.
 
 ## Struktur Project
