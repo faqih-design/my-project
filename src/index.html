@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Name Layout Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell" id="appShell">
+    <header class="top-toolbar" aria-label="Toolbar produksi">
+      <div class="app-titlebar">
+        <button id="leftCollapseButton" type="button" class="icon-button" title="Collapse panel input">☰</button>
+        <div>
+          <p class="eyebrow">Name Layout Generator</p>
+          <strong>Production Workspace</strong>
+        </div>
+      </div>
+      <div class="toolbar-actions">
+        <button id="undoButton" type="button">↶ Undo</button>
+        <button id="redoButton" type="button">↷ Redo</button>
+        <button id="saveButton" type="button">Save</button>
+        <button id="exportButton" type="button" class="primary">Export PNG</button>
+      </div>
+      <div class="toolbar-status">
+        <div class="zoom-controls" aria-label="Zoom canvas">
+          <button id="zoomOutButton" type="button">−</button>
+          <strong id="zoomValue">100%</strong>
+          <button id="zoomInButton" type="button">+</button>
+        </div>
+        <div class="counter compact-counter"><span>GROUP</span><strong id="groupCounter">0 / 5</strong></div>
+        <button id="rightCollapseButton" type="button" class="icon-button" title="Collapse panel setting">⚙</button>
+      </div>
+    </header>
+
+    <aside class="sidebar left-sidebar" aria-label="Input produksi">
+      <section class="brand-card compact-brand">
+        <p class="eyebrow">Input Cepat</p>
+        <h1>Name Layout</h1>
+        <p>Masukkan resi dan nama, canvas langsung update.</p>
+      </section>
+
+      <section class="panel warning" id="limitWarning" hidden></section>
+
+      <section class="panel panel-section">
+        <div class="panel-title">Header Grup</div>
+        <div class="grid two compact">
+          <label>Kode<input id="kodeInput" value="KRUPUK" autocomplete="off"></label>
+          <label>Tanggal<input id="tanggalInput" value="01" autocomplete="off"></label>
+          <label>Ruko<input id="rukoInput" value="RESI RUKO 2" autocomplete="off"></label>
+          <label>Pengiriman<input id="pengirimanInput" value="RBS" autocomplete="off"></label>
+        </div>
+        <label>Mode Header
+          <select id="headerModeInput">
+            <option>LANJUTKAN KODE</option>
+            <option>KODE BARU</option>
+          </select>
+        </label>
+        <div class="button-row stacked-actions">
+          <button id="newGroupButton" type="button">Tambah Grup</button>
+          <button id="finishGroupButton" type="button">F1 Selesaikan Grup</button>
+        </div>
+      </section>
+
+      <section class="panel panel-section input-panel">
+        <div class="panel-title">Input Nama</div>
+        <label>Resi ID<input id="resiInput" value="RESI-001" autocomplete="off"></label>
+        <label>Nama (Enter / multi-line paste)
+          <textarea id="nameInput" rows="8" placeholder="Ketik nama lalu ENTER"></textarea>
+        </label>
+        <button id="addNamesButton" type="button" class="primary wide-button">Masukkan ke Layout</button>
+      </section>
+
+      <section class="panel panel-section group-panel">
+        <div class="panel-title">Info Produksi</div>
+        <div class="stats" id="statsOutput"></div>
+        <label>Quick Search<input id="searchInput" placeholder="nama, resi, kode, ruko"></label>
+        <div id="searchResults" class="search-results"></div>
+        <p class="private-hint" id="privateHint">Private mode terkunci. Shortcut owner tersedia.</p>
+        <label class="inline-check"><input id="privateModeInput" type="checkbox" disabled> Private unlock mode</label>
+        <label>Custom limit private<input id="privateLimitInput" type="number" placeholder="Kosong = unlimited" min="1" disabled></label>
+      </section>
+    </aside>
+
+    <section class="workspace" aria-label="Canvas workspace">
+      <div class="canvas-workarea">
+        <div class="ruler-corner">cm</div>
+        <div id="topRuler" class="ruler ruler-top" aria-hidden="true"></div>
+        <div id="leftRuler" class="ruler ruler-left" aria-hidden="true"></div>
+        <div class="canvas-viewport" id="canvasViewport">
+          <div class="canvas-stage" id="canvasStage">
+            <svg id="previewCanvas" role="img" aria-label="Preview layout nama"></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar right-sidebar" aria-label="Setting tampilan dan export">
+      <section class="panel panel-section">
+        <div class="panel-title">Font & Spacing</div>
+        <label>Font Nama<input id="fontInput" value="Arial Black, Impact, sans-serif"></label>
+        <label>Font Header<input id="headerFontInput" value="Arial, sans-serif"></label>
+        <div class="grid two compact">
+          <label>Header (cm)<input id="headerSizeInput" type="number" value="1.15" min="0.4" step="0.05"></label>
+          <label>Letter (cm)<input id="letterSpacingInput" type="number" value="0.03" step="0.01"></label>
+        </div>
+      </section>
+
+      <section class="panel color-panel panel-section">
+        <div class="panel-title">Warna Produksi</div>
+        <p class="panel-hint">Pilih visual, CMYK tersimpan otomatis.</p>
+        <div class="color-picker-card">
+          <label>Warna Teks<input id="textColorPicker" type="color" value="#000000"></label>
+          <div class="color-preview" id="textColorPreview"><span>TEXT</span></div>
+          <div class="cmyk-readout" aria-label="Nilai CMYK warna teks">
+            <label>C<input id="textC" type="number" value="0" readonly></label>
+            <label>M<input id="textM" type="number" value="0" readonly></label>
+            <label>Y<input id="textY" type="number" value="0" readonly></label>
+            <label>K<input id="textK" type="number" value="100" readonly></label>
+          </div>
+          <div class="quick-swatches" id="textPresetColors" aria-label="Preset warna teks"></div>
+          <div class="quick-swatches recent" id="textRecentColors" aria-label="Recent warna teks"></div>
+        </div>
+        <div class="color-picker-card">
+          <label>Warna Outline<input id="outlineColorPicker" type="color" value="#ffffff"></label>
+          <div class="color-preview outline-preview" id="outlineColorPreview"><span>OUTLINE</span></div>
+          <div class="cmyk-readout" aria-label="Nilai CMYK warna outline">
+            <label>C<input id="outlineC" type="number" value="0" readonly></label>
+            <label>M<input id="outlineM" type="number" value="0" readonly></label>
+            <label>Y<input id="outlineY" type="number" value="0" readonly></label>
+            <label>K<input id="outlineK" type="number" value="0" readonly></label>
+          </div>
+          <div class="quick-swatches" id="outlinePresetColors" aria-label="Preset warna outline"></div>
+          <div class="quick-swatches recent" id="outlineRecentColors" aria-label="Recent warna outline"></div>
+        </div>
+      </section>
+
+      <section class="panel panel-section">
+        <div class="panel-title">Outline & Export</div>
+        <label>Outline Mode
+          <select id="outlineMode">
+            <option value="auto">AUTO OUTLINE</option>
+            <option value="manual">MANUAL OUTLINE</option>
+          </select>
+        </label>
+        <div class="grid two compact">
+          <label>Min (cm)<input id="outlineMin" type="number" value="0.04" min="0" step="0.01"></label>
+          <label>Max (cm)<input id="outlineMax" type="number" value="0.15" min="0" step="0.01"></label>
+        </div>
+        <label>Opacity Outline<input id="outlineOpacity" type="number" value="1" min="0" max="1" step="0.05"></label>
+        <label>DPI Export
+          <select id="dpiInput">
+            <option value="72">72 DPI</option>
+            <option value="150">150 DPI</option>
+            <option value="300" selected>300 DPI</option>
+          </select>
+        </label>
+        <label class="inline-check debug-toggle"><input id="debugOverlayInput" type="checkbox"> Debug overlay</label>
+      </section>
+    </aside>
+  </main>
+
+  <script src="layoutEngine.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
